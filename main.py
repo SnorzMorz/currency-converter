@@ -20,6 +20,18 @@ class CurrencyConverter():
         if response["result"] != "success":
             raise Exception(response["error-type"])
         return response["conversion_result"]
+    
+    def convert_amount_historic(self, amount:float, from_currency:Currency, to_currency:Currency)-> float:
+        if (from_currency, to_currency) in self.exchange_rate_cache:
+            return amount * self.exchange_rate_cache[(from_currency, to_currency)]
+        
+        response: dict = requests.get(f"https://v6.exchangerate-api.com/v6/{self.api_key}/pair/{from_currency.name}/{to_currency.name}/{amount}").json()
+
+        # GET https://v6.exchangerate-api.com/v6/YOUR-API-KEY/history/USD/YEAR/MONTH/DAY
+
+        if response["result"] != "success":
+            raise Exception(response["error-type"])
+        return response["conversion_result"]
 
 
     def fetch_exchange_rate(self):
