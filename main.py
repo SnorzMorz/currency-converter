@@ -21,24 +21,22 @@ class CurrencyConverter():
             raise Exception(response["error-type"])
         return response["conversion_result"]
     
-    def convert_amount_historic(self, amount:float, from_currency:Currency, to_currency:Currency)-> float:
+    def convert_amount_historic(self, amount:float, from_currency:Currency, to_currency:Currency, date: datetime.date)-> float:
         if (from_currency, to_currency) in self.exchange_rate_cache:
             return amount * self.exchange_rate_cache[(from_currency, to_currency)]
         
-        response: dict = requests.get(f"https://v6.exchangerate-api.com/v6/{self.api_key}/pair/{from_currency.name}/{to_currency.name}/{amount}").json()
+        response: dict = requests.get(f"https://v6.exchangerate-api.com/v6/{self.api_key}/history/{from_currency.name}/{date.year}/{date.month}/{date.day}").json()
 
-        # GET https://v6.exchangerate-api.com/v6/YOUR-API-KEY/history/USD/YEAR/MONTH/DAY
 
         if response["result"] != "success":
             raise Exception(response["error-type"])
-        return response["conversion_result"]
+        
+
+        return response["conversion_rates"][to_currency.name] * amount
 
 
     def fetch_exchange_rate(self):
         pass
-
-def main():
-    print("Hello World!")
 
 if __name__ == "__main__":
     currency_converter = CurrencyConverter()

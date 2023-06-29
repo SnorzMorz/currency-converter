@@ -1,1 +1,5 @@
 api_key.txt
+*.pyc
+*.pyo
+__pycache__/
+.vscode/
